@@ -194,6 +194,9 @@ public class ContentExtractor {
         } catch (Exception ex) {
             LOG.info("title extraction failed", ex);
         }
+
+        news.setDoc(doc);
+
         return news;
     }
 

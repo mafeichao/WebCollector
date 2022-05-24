@@ -17,6 +17,7 @@
  */
 package cn.edu.hfut.dmic.contentextractor;
 
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 /**
@@ -31,6 +32,8 @@ public class News {
     protected String time = null;
 
     protected Element contentElement = null;
+
+    protected Document doc = null;
 
     public String getUrl() {
         return url;
@@ -69,6 +72,12 @@ public class News {
 
     public void setTime(String time) {
         this.time = time;
+    }
+
+    public Document getDoc() { return doc; }
+
+    public void setDoc(Document doc) {
+        this.doc = doc;
     }
 
     @Override

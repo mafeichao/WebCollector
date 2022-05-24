@@ -57,12 +57,13 @@ public class OkHttpRequester extends DefaultConfigured implements Requester{
 
     public OkHttpClient.Builder createOkHttpClientBuilder(){
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
-                .followRedirects(false)
-                .followSslRedirects(false)
+                .followRedirects(true)
+                .followSslRedirects(true)
                 .connectTimeout(getConf().getConnectTimeout(), TimeUnit.MILLISECONDS)
-                .readTimeout(getConf().getReadTimeout(), TimeUnit.MILLISECONDS);
+                .readTimeout(getConf().getReadTimeout(), TimeUnit.MILLISECONDS)
+                .sslSocketFactory(SSLSocketClient.getSSLSocketFactory())
+                .hostnameVerifier(SSLSocketClient.getHostnameVerifier());
         return builder;
-
     }
 
     public Request.Builder createRequestBuilder(CrawlDatum crawlDatum){
