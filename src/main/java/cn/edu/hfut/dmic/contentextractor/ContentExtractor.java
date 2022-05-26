@@ -175,7 +175,7 @@ public class ContentExtractor {
             contentElement = getContentElement();
             news.setContentElement(contentElement);
         } catch (Exception ex) {
-            LOG.info("news content extraction failed,extraction abort", ex);
+            LOG.info("news content extraction failed,extraction abort");
             //throw new Exception(ex);
         }
 
@@ -186,13 +186,13 @@ public class ContentExtractor {
         try {
             news.setTime(getTime(contentElement));
         } catch (Exception ex) {
-            LOG.info("news title extraction failed", ex);
+            LOG.info("news title extraction failed");
         }
 
         try {
             news.setTitle(getTitle(contentElement));
         } catch (Exception ex) {
-            LOG.info("title extraction failed", ex);
+            LOG.info("title extraction failed");
         }
 
         news.setDoc(doc);
@@ -281,64 +281,21 @@ public class ContentExtractor {
     }
 
     protected String getTitle(final Element contentElement) throws Exception {
-        final ArrayList<Element> titleList = new ArrayList<Element>();
-        final ArrayList<Double> titleSim = new ArrayList<Double>();
-        final AtomicInteger contentIndex = new AtomicInteger();
         final String metaTitle = doc.title().trim();
-        if (!metaTitle.isEmpty()) {
-            doc.body().traverse(new NodeVisitor() {
-                @Override
-                public void head(Node node, int i) {
-                    if (node instanceof Element) {
-                        Element tag = (Element) node;
-                        if (tag == contentElement) {
-                            contentIndex.set(titleList.size());
-                            return;
-                        }
-                        String tagName = tag.tagName();
-                        if (Pattern.matches("h[1-6]", tagName)) {
-                            String title = tag.text().trim();
-                            double sim = strSim(title, metaTitle);
-                            titleSim.add(sim);
-                            titleList.add(tag);
-                        }
-                    }
-                }
-
-                @Override
-                public void tail(Node node, int i) {
-                }
-            });
-            int index = contentIndex.get();
-            if (index > 0) {
-                double maxScore = 0;
-                int maxIndex = -1;
-                for (int i = 0; i < index; i++) {
-                    double score = (i + 1) * titleSim.get(i);
-                    if (score > maxScore) {
-                        maxScore = score;
-                        maxIndex = i;
-                    }
-                }
-                if (maxIndex != -1) {
-                    return titleList.get(maxIndex).text();
-                }
-            }
+        if(!metaTitle.isEmpty()) {
+            return metaTitle;
         }
 
         Elements titles = doc.body().select("*[id^=title],*[id$=title],*[class^=title],*[class$=title]");
         if (titles.size() > 0) {
             String title = titles.first().text();
-            if (title.length() > 5 && title.length()<40) {
+            if (title.length() > 0) {
                 return titles.first().text();
             }
         }
         try {
             return getTitleByEditDistance(contentElement);
         } catch (Exception ex) {
-            if (!metaTitle.isEmpty()) {
-                return metaTitle;
-            }
             throw new Exception("title not found");
         }
     }
