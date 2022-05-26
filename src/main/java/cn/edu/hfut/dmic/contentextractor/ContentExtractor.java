@@ -170,13 +170,13 @@ public class ContentExtractor {
 
     public News getNews() throws Exception {
         News news = new News();
-        Element contentElement;
+        Element contentElement = null;
         try {
             contentElement = getContentElement();
             news.setContentElement(contentElement);
         } catch (Exception ex) {
             LOG.info("news content extraction failed,extraction abort", ex);
-            throw new Exception(ex);
+            //throw new Exception(ex);
         }
 
         if (doc.baseUri() != null) {
@@ -336,9 +336,11 @@ public class ContentExtractor {
         try {
             return getTitleByEditDistance(contentElement);
         } catch (Exception ex) {
+            if (!metaTitle.isEmpty()) {
+                return metaTitle;
+            }
             throw new Exception("title not found");
         }
-
     }
 
     protected String getTitleByEditDistance(Element contentElement) throws Exception {
